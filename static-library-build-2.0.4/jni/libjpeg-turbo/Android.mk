@@ -172,6 +172,7 @@ LOCAL_SRC_FILES += \
 	$(SOURCE_PATH)/jutils.c \
 	$(SOURCE_PATH)/jmemmgr.c \
 	$(SOURCE_PATH)/jmemnobs.c \
+	$(SOURCE_PATH)/wrbmp.c \
 
 # if WITH_ARITH_ENC from Makefile.am
 LOCAL_SRC_FILES += \
@@ -185,6 +186,7 @@ LOCAL_SRC_FILES += \
 	$(SOURCE_PATH)/transupp.c \
 	$(SOURCE_PATH)/jdatadst-tj.c \
 	$(SOURCE_PATH)/jdatasrc-tj.c \
+	$(SOURCE_PATH)/test.c \
 
 LOCAL_C_INCLUDES += \
 	$(LOCAL_PATH)/include \
