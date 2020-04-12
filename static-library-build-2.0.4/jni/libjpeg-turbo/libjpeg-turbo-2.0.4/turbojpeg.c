@@ -1990,92 +1990,93 @@ DLLEXPORT unsigned char *tjLoadImage(const char *filename, int *width,
                                      int align, int *height, int *pixelFormat,
                                      int flags)
 {
-  int retval = 0, tempc;
-  size_t pitch;
-  tjhandle handle = NULL;
-  tjinstance *this;
-  j_compress_ptr cinfo = NULL;
-  cjpeg_source_ptr src;
-  unsigned char *dstBuf = NULL;
-  FILE *file = NULL;
-  boolean invert;
+  return NULL;
+//   int retval = 0, tempc;
+//   size_t pitch;
+//   tjhandle handle = NULL;
+//   tjinstance *this;
+//   j_compress_ptr cinfo = NULL;
+//   cjpeg_source_ptr src;
+//   unsigned char *dstBuf = NULL;
+//   FILE *file = NULL;
+//   boolean invert;
 
-  if (!filename || !width || align < 1 || !height || !pixelFormat ||
-      *pixelFormat < TJPF_UNKNOWN || *pixelFormat >= TJ_NUMPF)
-    THROWG("tjLoadImage(): Invalid argument");
-  if ((align & (align - 1)) != 0)
-    THROWG("tjLoadImage(): Alignment must be a power of 2");
+//   if (!filename || !width || align < 1 || !height || !pixelFormat ||
+//       *pixelFormat < TJPF_UNKNOWN || *pixelFormat >= TJ_NUMPF)
+//     THROWG("tjLoadImage(): Invalid argument");
+//   if ((align & (align - 1)) != 0)
+//     THROWG("tjLoadImage(): Alignment must be a power of 2");
 
-  if ((handle = tjInitCompress()) == NULL) return NULL;
-  this = (tjinstance *)handle;
-  cinfo = &this->cinfo;
+//   if ((handle = tjInitCompress()) == NULL) return NULL;
+//   this = (tjinstance *)handle;
+//   cinfo = &this->cinfo;
 
-  if ((file = fopen(filename, "rb")) == NULL)
-    THROW_UNIX("tjLoadImage(): Cannot open input file");
+//   if ((file = fopen(filename, "rb")) == NULL)
+//     THROW_UNIX("tjLoadImage(): Cannot open input file");
 
-  if ((tempc = getc(file)) < 0 || ungetc(tempc, file) == EOF)
-    THROW_UNIX("tjLoadImage(): Could not read input file")
-  else if (tempc == EOF)
-    THROWG("tjLoadImage(): Input file contains no data");
+//   if ((tempc = getc(file)) < 0 || ungetc(tempc, file) == EOF)
+//     THROW_UNIX("tjLoadImage(): Could not read input file")
+//   else if (tempc == EOF)
+//     THROWG("tjLoadImage(): Input file contains no data");
 
-  if (setjmp(this->jerr.setjmp_buffer)) {
-    /* If we get here, the JPEG code has signaled an error. */
-    retval = -1;  goto bailout;
-  }
+//   if (setjmp(this->jerr.setjmp_buffer)) {
+//     /* If we get here, the JPEG code has signaled an error. */
+//     retval = -1;  goto bailout;
+//   }
 
-  if (*pixelFormat == TJPF_UNKNOWN) cinfo->in_color_space = JCS_UNKNOWN;
-  else cinfo->in_color_space = pf2cs[*pixelFormat];
-  if (tempc == 'B') {
-    if ((src = jinit_read_bmp(cinfo, FALSE)) == NULL)
-      THROWG("tjLoadImage(): Could not initialize bitmap loader");
-    invert = (flags & TJFLAG_BOTTOMUP) == 0;
-  } else if (tempc == 'P') {
-    if ((src = jinit_read_ppm(cinfo)) == NULL)
-      THROWG("tjLoadImage(): Could not initialize bitmap loader");
-    invert = (flags & TJFLAG_BOTTOMUP) != 0;
-  } else
-    THROWG("tjLoadImage(): Unsupported file type");
+//   if (*pixelFormat == TJPF_UNKNOWN) cinfo->in_color_space = JCS_UNKNOWN;
+//   else cinfo->in_color_space = pf2cs[*pixelFormat];
+//   if (tempc == 'B') {
+//     if ((src = jinit_read_bmp(cinfo, FALSE)) == NULL)
+//       THROWG("tjLoadImage(): Could not initialize bitmap loader");
+//     invert = (flags & TJFLAG_BOTTOMUP) == 0;
+//   } else if (tempc == 'P') {
+//     if ((src = jinit_read_ppm(cinfo)) == NULL)
+//       THROWG("tjLoadImage(): Could not initialize bitmap loader");
+//     invert = (flags & TJFLAG_BOTTOMUP) != 0;
+//   } else
+//     THROWG("tjLoadImage(): Unsupported file type");
 
-  src->input_file = file;
-  (*src->start_input) (cinfo, src);
-  (*cinfo->mem->realize_virt_arrays) ((j_common_ptr)cinfo);
+//   src->input_file = file;
+//   (*src->start_input) (cinfo, src);
+//   (*cinfo->mem->realize_virt_arrays) ((j_common_ptr)cinfo);
 
-  *width = cinfo->image_width;  *height = cinfo->image_height;
-  *pixelFormat = cs2pf[cinfo->in_color_space];
+//   *width = cinfo->image_width;  *height = cinfo->image_height;
+//   *pixelFormat = cs2pf[cinfo->in_color_space];
 
-  pitch = PAD((*width) * tjPixelSize[*pixelFormat], align);
-  if ((unsigned long long)pitch * (unsigned long long)(*height) >
-      (unsigned long long)((size_t)-1) ||
-      (dstBuf = (unsigned char *)malloc(pitch * (*height))) == NULL)
-    THROWG("tjLoadImage(): Memory allocation failure");
+//   pitch = PAD((*width) * tjPixelSize[*pixelFormat], align);
+//   if ((unsigned long long)pitch * (unsigned long long)(*height) >
+//       (unsigned long long)((size_t)-1) ||
+//       (dstBuf = (unsigned char *)malloc(pitch * (*height))) == NULL)
+//     THROWG("tjLoadImage(): Memory allocation failure");
 
-  if (setjmp(this->jerr.setjmp_buffer)) {
-    /* If we get here, the JPEG code has signaled an error. */
-    retval = -1;  goto bailout;
-  }
+//   if (setjmp(this->jerr.setjmp_buffer)) {
+//     /* If we get here, the JPEG code has signaled an error. */
+//     retval = -1;  goto bailout;
+//   }
 
-  while (cinfo->next_scanline < cinfo->image_height) {
-    int i, nlines = (*src->get_pixel_rows) (cinfo, src);
+//   while (cinfo->next_scanline < cinfo->image_height) {
+//     int i, nlines = (*src->get_pixel_rows) (cinfo, src);
 
-    for (i = 0; i < nlines; i++) {
-      unsigned char *dstptr;
-      int row;
+//     for (i = 0; i < nlines; i++) {
+//       unsigned char *dstptr;
+//       int row;
 
-      row = cinfo->next_scanline + i;
-      if (invert) dstptr = &dstBuf[((*height) - row - 1) * pitch];
-      else dstptr = &dstBuf[row * pitch];
-      memcpy(dstptr, src->buffer[i], (*width) * tjPixelSize[*pixelFormat]);
-    }
-    cinfo->next_scanline += nlines;
-  }
+//       row = cinfo->next_scanline + i;
+//       if (invert) dstptr = &dstBuf[((*height) - row - 1) * pitch];
+//       else dstptr = &dstBuf[row * pitch];
+//       memcpy(dstptr, src->buffer[i], (*width) * tjPixelSize[*pixelFormat]);
+//     }
+//     cinfo->next_scanline += nlines;
+//   }
 
-  (*src->finish_input) (cinfo, src);
+//   (*src->finish_input) (cinfo, src);
 
-bailout:
-  if (handle) tjDestroy(handle);
-  if (file) fclose(file);
-  if (retval < 0 && dstBuf) { free(dstBuf);  dstBuf = NULL; }
-  return dstBuf;
+// bailout:
+//   if (handle) tjDestroy(handle);
+//   if (file) fclose(file);
+//   if (retval < 0 && dstBuf) { free(dstBuf);  dstBuf = NULL; }
+//   return dstBuf;
 }
 
 
@@ -2083,70 +2084,71 @@ DLLEXPORT int tjSaveImage(const char *filename, unsigned char *buffer,
                           int width, int pitch, int height, int pixelFormat,
                           int flags)
 {
-  int retval = 0;
-  tjhandle handle = NULL;
-  tjinstance *this;
-  j_decompress_ptr dinfo = NULL;
-  djpeg_dest_ptr dst;
-  FILE *file = NULL;
-  char *ptr = NULL;
-  boolean invert;
+  return 0;
+//   int retval = 0;
+//   tjhandle handle = NULL;
+//   tjinstance *this;
+//   j_decompress_ptr dinfo = NULL;
+//   djpeg_dest_ptr dst;
+//   FILE *file = NULL;
+//   char *ptr = NULL;
+//   boolean invert;
 
-  if (!filename || !buffer || width < 1 || pitch < 0 || height < 1 ||
-      pixelFormat < 0 || pixelFormat >= TJ_NUMPF)
-    THROWG("tjSaveImage(): Invalid argument");
+//   if (!filename || !buffer || width < 1 || pitch < 0 || height < 1 ||
+//       pixelFormat < 0 || pixelFormat >= TJ_NUMPF)
+//     THROWG("tjSaveImage(): Invalid argument");
 
-  if ((handle = tjInitDecompress()) == NULL)
-    return -1;
-  this = (tjinstance *)handle;
-  dinfo = &this->dinfo;
+//   if ((handle = tjInitDecompress()) == NULL)
+//     return -1;
+//   this = (tjinstance *)handle;
+//   dinfo = &this->dinfo;
 
-  if ((file = fopen(filename, "wb")) == NULL)
-    THROW_UNIX("tjSaveImage(): Cannot open output file");
+//   if ((file = fopen(filename, "wb")) == NULL)
+//     THROW_UNIX("tjSaveImage(): Cannot open output file");
 
-  if (setjmp(this->jerr.setjmp_buffer)) {
-    /* If we get here, the JPEG code has signaled an error. */
-    retval = -1;  goto bailout;
-  }
+//   if (setjmp(this->jerr.setjmp_buffer)) {
+//     /* If we get here, the JPEG code has signaled an error. */
+//     retval = -1;  goto bailout;
+//   }
 
-  this->dinfo.out_color_space = pf2cs[pixelFormat];
-  dinfo->image_width = width;  dinfo->image_height = height;
-  dinfo->global_state = DSTATE_READY;
-  dinfo->scale_num = dinfo->scale_denom = 1;
+//   this->dinfo.out_color_space = pf2cs[pixelFormat];
+//   dinfo->image_width = width;  dinfo->image_height = height;
+//   dinfo->global_state = DSTATE_READY;
+//   dinfo->scale_num = dinfo->scale_denom = 1;
 
-  ptr = strrchr(filename, '.');
-  if (ptr && !strcasecmp(ptr, ".bmp")) {
-    if ((dst = jinit_write_bmp(dinfo, FALSE, FALSE)) == NULL)
-      THROWG("tjSaveImage(): Could not initialize bitmap writer");
-    invert = (flags & TJFLAG_BOTTOMUP) == 0;
-  } else {
-    if ((dst = jinit_write_ppm(dinfo)) == NULL)
-      THROWG("tjSaveImage(): Could not initialize PPM writer");
-    invert = (flags & TJFLAG_BOTTOMUP) != 0;
-  }
+//   ptr = strrchr(filename, '.');
+//   if (ptr && !strcasecmp(ptr, ".bmp")) {
+//     if ((dst = jinit_write_bmp(dinfo, FALSE, FALSE)) == NULL)
+//       THROWG("tjSaveImage(): Could not initialize bitmap writer");
+//     invert = (flags & TJFLAG_BOTTOMUP) == 0;
+//   } else {
+//     if ((dst = jinit_write_ppm(dinfo)) == NULL)
+//       THROWG("tjSaveImage(): Could not initialize PPM writer");
+//     invert = (flags & TJFLAG_BOTTOMUP) != 0;
+//   }
 
-  dst->output_file = file;
-  (*dst->start_output) (dinfo, dst);
-  (*dinfo->mem->realize_virt_arrays) ((j_common_ptr)dinfo);
+//   dst->output_file = file;
+//   (*dst->start_output) (dinfo, dst);
+//   (*dinfo->mem->realize_virt_arrays) ((j_common_ptr)dinfo);
 
-  if (pitch == 0) pitch = width * tjPixelSize[pixelFormat];
+//   if (pitch == 0) pitch = width * tjPixelSize[pixelFormat];
 
-  while (dinfo->output_scanline < dinfo->output_height) {
-    unsigned char *rowptr;
+//   while (dinfo->output_scanline < dinfo->output_height) {
+//     unsigned char *rowptr;
 
-    if (invert)
-      rowptr = &buffer[(height - dinfo->output_scanline - 1) * pitch];
-    else
-      rowptr = &buffer[dinfo->output_scanline * pitch];
-    memcpy(dst->buffer[0], rowptr, width * tjPixelSize[pixelFormat]);
-    (*dst->put_pixel_rows) (dinfo, dst, 1);
-    dinfo->output_scanline++;
-  }
+//     if (invert)
+//       rowptr = &buffer[(height - dinfo->output_scanline - 1) * pitch];
+//     else
+//       rowptr = &buffer[dinfo->output_scanline * pitch];
+//     memcpy(dst->buffer[0], rowptr, width * tjPixelSize[pixelFormat]);
+//     (*dst->put_pixel_rows) (dinfo, dst, 1);
+//     dinfo->output_scanline++;
+//   }
 
-  (*dst->finish_output) (dinfo, dst);
+//   (*dst->finish_output) (dinfo, dst);
 
-bailout:
-  if (handle) tjDestroy(handle);
-  if (file) fclose(file);
-  return retval;
+// bailout:
+//   if (handle) tjDestroy(handle);
+//   if (file) fclose(file);
+//   return retval;
 }
